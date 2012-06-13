@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dita PUBLIC "-//OASIS//DTD DITA Composite//EN"
+"ditabase.dtd">
+<dita>
+  <topic id="moving_your_form_to_a_popup">
+    <title>Introduction</title>
+
+    <body>
+      <p>All of the code from this lesson is available on GitHub @ <xref
+      href="https://github.com/apanzerj/Former-For-Zendesk/tree/Lesson-2-Branch">https://github.com/apanzerj/Former-For-Zendesk/tree/Lesson-2-Branch</xref></p>
+
+      <p><b>Objective:</b> Let's put our new ticket creation form in a popup
+      box. To do this we're going use a Javascript library called jQuery and
+      jQuery User Interface. These two libraries make a lot of the "niceties"
+      of Zendesk possible. When we're done you'll have something like this:
+      <xref
+      href="http://jsfiddle.net/apanzerj/eARdt/">http://jsfiddle.net/apanzerj/eARdt/</xref></p>
+
+      <p><b>Setup</b></p>
+
+      <ol>
+        <li>To set this up we need to get the locations of the two libraries
+        we are going to use. I use a special site, <xref
+        href="http://scriptsrc.net">http://scriptsrc.net/</xref>, in order to
+        find these useful tools.</li>
+
+        <li>Once you get there, click the link to copy the jQuery library
+        first. As of this writing you should end up with something like
+        this:<codeblock>&lt;script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jQuery/1.7.2/jQuery.min.js"&gt;&lt;/script&gt;</codeblock></li>
+
+        <li>Put this in your HTML document from the previous walkthrough. This
+        is going to be in the "former.html" file we made, but you'll need to
+        add a &lt;head&gt; and &lt;/head&gt; tags. The final product should
+        look like this (The blue part is the added part and yes, the picture
+        is clipped off but the concept is there):<image
+        href="https://support.zendesk.com/attachments/token/9o2zsvpkvrxlp8g/?name=clipped.png"
+        placement="break"/></li>
+
+        <li>Do the same thing but this time with the jQuery User Interface
+        (jQueryUI) library. </li>
+
+        <li>We'll need to update the form with labels. We want to enclose each
+        piece of text with a &lt;label for= tag, such that the name line (for
+        example) looks as follows:<codeblock>&lt;p&gt;<b>&lt;label for="z_name"&gt;</b>Name: <b>&lt;/label&gt;</b>&lt;input type="text" name="z_name"&gt;&lt;/p&gt;</codeblock>The
+        added parts are in <b>bold.</b></li>
+
+        <li>Do this for each input element in our form. In addition, place a
+        &lt;div&gt; around the contents of the form (but not the form itself).
+        Thus you'll have the following:<p><codeblock>**FIXME**&lt;script src="https://gist.github.com/2898592.js?file=former.html"&gt;&lt;/script&gt;</codeblock></p></li>
+
+        <li>Now that we have the HTML portion taken care of, we need to move
+        on to our Javascript portion. If you're familiar with Javascript but
+        not jQuery this might be a bit different from what you're used to
+        seeing.</li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="moving_your_form_to_a_popup-2">
+    <title>Hello Caller, What's Your jQuery?</title>
+
+    <body>
+      <p><i>The jQuery wiring behind our form.</i></p>
+
+      <ol>
+        <li>We'll start with the basic opener for all Javascript. The script
+        tag.<codeblock>&lt;script type="JavaScript"&gt;</codeblock></li>
+
+        <li>You'll need to add a close tag too which is: &lt;/script&gt;. All
+        of your Javascript code needs to go BETWEEN these statements. </li>
+
+        <li>In jQuery you usually want to execute your code after the document
+        has loaded (or become "ready") for the user. To do this we open with
+        the following block:<codeblock>$(document).ready(function(){</codeblock></li>
+
+        <li>Notice that we opened a ( and a { so we'll need to close this when
+        we're done. Thus the last part of this script will be });</li>
+
+        <li>We'll want to tell jQuery that the div called box_form has our
+        form in it. When we do, jQuery place the contents in a dialog box. In
+        addition, we are also telling jQuery that we are creating a new Dialog
+        object, and it will have specific properties (in the next step). To do
+        this we write the following:<codeblock>$('#box_form').dialog({</codeblock></li>
+
+        <li>The next few lines set the parameters of the new dialog. We do not
+        want it to open automatically when the page loads (we want the user to
+        click the button). We set the height and width, and lastly we set the
+        box to modal (It prevents the user from seeing the background or
+        clicking on other stuff). <codeblock>autoOpen: false,
+height: 375,
+width: 350,
+modal: true,</codeblock></li>
+
+        <li>Now we'll put some buttons in too. We want two buttons, ideally, a
+        cancel and a submit button. To do this we'll use the following
+        code:<codeblock>  buttons: [
+            {
+            text: "Cancel",
+            click: function() {
+                $(this).dialog("close");
+            }},
+            {
+            text: "Submit",
+            click: function() {
+                $('#zFormer').submit();
+            }}
+        ]</codeblock><p><b>Explanation (can be skipped - if you do pickup at
+        part 8):</b></p>The "[" character tells jQuery what follows is an
+        array (think of it like a list of things, in this case, buttons). The
+        "{" is an object marker (think of this as similar to the jQuery object
+        from the previous tutorial). We have two properties for our button:
+        the text of the button and the function (code) that executes when we
+        click it. Our first button is the Cancel button, and the action it
+        takes is $(this).dialog("close"). The "$(this)" object refers to the
+        dialog and the dialog("close") simply tells us to close it (the
+        opposite, obviously of dialog("open") which you'll see later). <p>The
+        next button is our submit button. The action assigned to it says:
+        "Find the element id labeled zFormer and submit it. This is the same
+        as if we had an HTML &lt;input type="submit" element and clicked on
+        it.</p></li>
+
+        <li>Close out your dialog code with a }); at the end so that we tell
+        jQuery we're done with the dialog object. The entire dialog object,
+        put together will look as follows:<codeblock>**FIXME**&lt;script src="https://gist.github.com/2919475.js?file=snippet1.js"&gt;&lt;/script&gt;</codeblock></li>
+
+        <li>We're almost there. We gotta find a way to trigger the dialog box.
+        We'll attach the dialog to the button at the bottom of our HTML called
+        "Clicky" with the display value of "Show Form". This is a smaller
+        piece of code. <codeblock>$('#clicky').button().click(function() {
+        $("#box_form").dialog("open");
+});</codeblock><p>This tells jQuery when the user <b>clicks</b> on the element
+        <b>clicky</b> which is a <b>button</b> to find the <b>div</b> element
+        <b>box_form</b> and open the <b>dialog</b> associated with it.
+        </p></li>
+
+        <li>Finish off your jQuery by remembering to close out our brackets
+        and such. You'll tack on a }); and be done for the most part with
+        jQuery.</li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="moving_your_form_to_a_popup-3">
+    <title>I Can CSS Clearly Now the Rain is Gone</title>
+
+    <body>
+      <p><i>Organizing and arranging our dialog box.</i></p>
+
+      <ol>
+        <li>We need to tell the browser that we want what follows to be
+        treated as CSS styling. So we use the &lt;style&gt; tag, as
+        follows:<codeblock>&lt;style type="text/css"&gt;</codeblock></li>
+
+        <li>Make sure to add a close tag for our style section as well. You
+        should have something like this:<codeblock>&lt;style type="text/css"&gt; &lt;/style&gt;</codeblock></li>
+
+        <li>You'll put all your CSS code between these two style tags.</li>
+
+        <li>We don't want to style anything on the page except the elements in
+        our div. To do this we need to give CSS some selectors.</li>
+
+        <li>Set the font size to 12 pixels on all elements in the div (and all
+        it's child elements too). We also want to give everything some space.
+        So we adjust the lower margins to 15px (a gutter of 15
+        pixels):<codeblock>#box_form &gt; *{
+    font-size:12px;
+    margin-bottom:15px;
+}</codeblock></li>
+
+        <li>Next we're going to tell the browser to treat all label elements
+        (those tags we added previously) as block elements (this means they
+        get their own line to themselves). Because these are labels we should
+        also make their font a little bigger. So we'll toss in a font size
+        increase to 18 pixels. <codeblock>#box_form &gt; p &gt; label{
+    display:block;
+    font-size:18px;
+}</codeblock></li>
+
+        <li>Now we make it so that our 3 inputs (the text boxes) and our
+        multi-line description box (the textarea) are each long enough to span
+        the page entirely. To do this we add the following CSS: <codeblock>#box_form &gt; p &gt; input, #box_form &gt; p &gt; textarea{
+        width:300px;
+}</codeblock></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="moving_your_form_to_a_popup-4">
+    <title>Plain As Day</title>
+
+    <body>
+      <p><i>Let's make this look snappier!</i></p>
+
+      <ol>
+        <li>So now we have some text that floats in the middle of the screen
+        with our form on it. It doesn't look very stylish but it gets the job
+        done. What if we wanted it to look better? Thankfully jQuery has this
+        already figured this out for us, with themes. </li>
+
+        <li>Themes can be previewed over at <xref
+        href="http://jqueryui.com/themeroller/">http://jqueryui.com/themeroller/</xref>
+        (Hint: Click on Gallery to see the pre-made ones). </li>
+
+        <li>When you find one you like go back to the tab that says "Roll Your
+        Own" and click "Download theme". </li>
+
+        <li>In this case I really like the theme vader. We'll need to put this
+        CSS file with our code in the same directory. In your HTML file make
+        sure to include the following:<codeblock>&lt;link rel="stylesheet" type="text/css" href="jquery-ui.css"&gt;</codeblock></li>
+
+        <li>Now save your file and hit refresh. Voila! It looks a lot nicer
+        now.</li>
+      </ol>
+    </body>
+  </topic>
+</dita>

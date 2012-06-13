@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dita PUBLIC "-//OASIS//DTD DITA Composite//EN"
+"ditabase.dtd">
+<dita>
+  <topic id="MaxIncidents">
+    <title>MaxIncidents: Alerts Based on Incident Number</title>
+
+    <body>
+      <p><b>Objective</b>: We want to be able to alert a manager in times of
+      crisis. This is usually when we have a problem with, for example, 10
+      incidents attached. </p>
+
+      <p><b>Tools</b>: The function we wrote that wraps around CURL. This is
+      included below. If you have used this function previously then that's
+      fine but copy the one listed here as it is more complete. </p>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-2">
+    <title>curlWrap is Back!</title>
+
+    <body>
+      <p><i>Modifications to curlWrap.</i></p>
+
+      <ol>
+        <li>The first thing we need to do is create a new PHP file. To do this
+        just create a new document we'll call maxincidents.php</li>
+
+        <li>Inside there we'll put in our standard &lt;?php and ?&gt;</li>
+
+        <li>Now at the top we need our basic include statements:<codeblock>define("ZDAPIKEY", "apikey");
+define("ZDUSER", "username");
+define("ZDURL", "https://ajpspoke.zendesk.com/api/v2");</codeblock></li>
+
+        <li>Replace the words apikey and username with your API key and
+        username from Zendesk. In addition, change the ZDURL to your zendesk
+        url. <b>NOTE: YOUR ZDURL NEEDS TO BE AS FORMATED ABOVE WITHOUT A
+        TRAILING "/"</b></li>
+
+        <li>Now we're going to include curlWrap. I'm not going to dive into a
+        whole lot of detail about what has changed.<codeblock>**FIXME**&lt;script src="https://gist.github.com/2920899.js?file=curlWrap.php"&gt;&lt;/script&gt;</codeblock></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-3">
+    <title>The Core</title>
+
+    <body>
+      <p><i>The core of the script.</i></p>
+
+      <p>The way the script works </p>
+
+      <ol>
+        <li>First we need to get </li>
+      </ol>
+    </body>
+  </topic>
+</dita>

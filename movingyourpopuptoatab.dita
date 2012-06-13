@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dita PUBLIC "-//OASIS//DTD DITA Composite//EN"
+"ditabase.dtd">
+<dita>
+  <topic id="movingyourformtoatab">
+    <title>Introduction</title>
+
+    <body>
+      <p><i>All of the code from this lesson is available on GitHub @ <xref
+      href="https://github.com/apanzerj/Former-For-Zendesk">https://github.com/apanzerj/Former-For-Zendesk</xref>
+      </i></p>
+
+      <p><b>Objective</b>: To make the new feedback form we designed into a
+      tab, like the feedback tab. Final product will look like this: <xref
+      href="http://jsfiddle.net/apanzerj/vGshK/">http://jsfiddle.net/apanzerj/vGshK/</xref></p>
+
+      <p><b>Tools:</b> You'll need a graphic of the word you want to use for
+      your feedback tab. In this case we will be using a transparent PNG with
+      the words "SUPPORT" written in white. This graphic needs to be hosted
+      somewhere, preferably on your own site. I'm using my Dropbox Public
+      folder to host mine.</p>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-2">
+    <title>Make Your Graphic </title>
+
+    <body>
+      <p>If you don't have a copy of Photoshop you can use an online free
+      alternative called Pixlr.com (click Open photo editor). You'll want to
+      create a new image that's 25px by 100px and has a transparent background
+      (you'll see the checkbox that says "Transparent" in Pixlr). If you can't
+      figure out how to do this, no sweat, just grab the image attached to
+      this article called supportv2.png (note that you won't see anything on
+      the image since it's white text on a transparent background).</p>
+
+      <p>Once you have your graphic host it somewhere (like your dropbox
+      public folder, your own website, anywhere). Copy the link and save it
+      for later.</p>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-3">
+    <title>Changes</title>
+
+    <body>
+      <p><i>We need to make several changes to our HTML to make our
+      "tab".</i></p>
+
+      <ol>
+        <li>Delete the button we created previously that opens the form popup.
+        The line of code to delete is:<codeblock>&lt;input type="button" id="clicky" value="Show Form"&gt;</codeblock></li>
+
+        <li>Next we want to add a link (an &lt;a href=) in that code's place.
+        It should look like this:<codeblock>&lt;a href="#" id="click2"&gt;Click Here&lt;/a&gt;</codeblock></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-4">
+    <title>Style It Up!</title>
+
+    <body>
+      <p><i>Add some extra styles.</i></p>
+
+      <ol>
+        <li>Now it's time for the magic. We want to add a new style. FInd the
+        part of your HTML page where you have your &lt;style .. tag and inside
+        there add the following new code: <codeblock>#click2 {
+     position: fixed;
+     right: 0;
+     top: 50px;
+     display: block;
+     width: 25px;
+     height: 100px;
+     text-indent: -10000px;
+     background-color:black;                 
+     background-image: url('SEE BELOW');
+     overflow: hidden;
+     -webkit-border-top-left-radius: 7px;
+     -webkit-border-bottom-left-radius: 7px;
+     -moz-border-radius-topleft: 7px;
+     -moz-border-radius-bottomleft: 7px;
+     border-top-left-radius: 7px;
+     border-bottom-left-radius: 7px;
+}</codeblock></li>
+
+        <li>You'll notice there's a part there where it says SEE BELOW. This
+        is where we want to put the link to our Support image. For example, if
+        you stored your PNG file on Dropbox you would copy the public link and
+        include it in place of the text that says see below. The end result
+        might look like this:<codeblock>background-image:url('https://www.dropbox.com/123123/support.png');</codeblock><p>Of
+        course, this is just an example and is by no means a real link. Now
+        that you've done all this you should see your tab on the right but
+        unfortunately, clicking on it doesn't do anything! We have a little
+        more wiring left to do.</p></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-5">
+    <title>jQuery Wiring</title>
+
+    <body>
+      <p><i>Now we want change up our jQuery to work with a new trigger.
+      </i><ol>
+          <li>Delete the code in your jQuery that looks like this:<codeblock>$('#clicky').button().click(function() {
+     $("#box_form").dialog("open");
+});</codeblock><p>and replace it with this code:<codeblock>$('#click2').click(function(e) {
+     $('#box_form').dialog('open');
+});</codeblock></p><p>That's it! If you've followed these instructions you
+          should have a fully working "feedback tab" impersonator that submits
+          tickets!</p></li>
+        </ol></p>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-6">
+    <title>Adding An Extra Page</title>
+
+    <body>
+      <p><i>Adding an additional page before the user submits a
+      ticket.</i></p>
+
+      <p>Let's suppose you have a FAQ and maybe 2 or 3 articles in your forum
+      about very common issues. You want to show this to users BEFORE they
+      submit a ticket. To do this you'll need to add an extra "page" to your
+      feedback. You can put anything you want on this extra page but in this
+      example I'm going to show you how to embed some text. </p>
+
+      <ol>
+        <li>First let's add an extra div. It should look like this:<codeblock>&lt;div id="page1"&gt;Your page content goes here.&lt;/div&gt;</codeblock><p>We're
+        going to want to keep it in the form element. This div is going to
+        contain your page content. </p></li>
+
+        <li>Since we are going to have more than one page we'll also want to
+        give our tabs titles. To do this, add the "title" attribute to your
+        dialog objects. Your code should look like this (though we have
+        clipped off the rest of the jQuery):<codeblock>$('#box_form').dialog({
+        autoOpen: false,
+        height: 375,
+        width: 350,
+        modal: true,
+        title: "Create Ticket",
+...</codeblock></li>
+
+        <li>Clone the jQuery we used previously (for our first pop-up) so we
+        can make page1 show up before box_form. To do this, copy the code and
+        paste it. You'll want to go from this:<codeblock>$('#box_form').dialog({
+        autoOpen: false,
+        height: 375,
+        width: 350,
+        modal: true,
+        title: "Create Ticket",
+        buttons: [
+            {
+            text: "Cancel",
+            click: function() {
+                $(this).dialog("close");
+            }},
+        {
+            text: "Submit",
+            click: function() {
+                $('#zFormer').submit();
+            }}
+        ]
+    });</codeblock><p>to this:<codeblock>$('#page1').dialog({
+        autoOpen: false,
+        height: 375,
+        width: 350,
+        modal: true,
+        title: "My Custom Feedback Tab",
+        buttons: [
+            {
+            text: "Cancel",
+            click: function() {
+                $(this).dialog("close");
+            }},
+        {
+            text: "Create Ticket",
+            click: function() {
+                $('#page1').dialog('close');
+                $('#box_form').dialog('open');
+            }}
+        ]
+    });</codeblock></p><p>What's changed? We'll for starters we have modified
+        the title and the element. Look at the first line of both segments and
+        you'll see what I mean. In the first one we are telling jQuery to make
+        the box_form div our dialog box, but in the second piece we tell
+        jQuery to make page1 the dialog too.</p><p>To be clear: So far we
+        recycled our code for the first dialog and created a second dialog
+        that has some text in it, a different title, some different buttons
+        too. </p><p>We still have the same Cancel button. We have a new
+        button, "Create Ticket", that has the behavior of closing the page1
+        window and opening the box_form dialog. </p></li>
+
+        <li>We also need to update our CSS to include new objects and the
+        like. We're going to change our first CSS rule from: <codeblock>#box_form &gt; * {</codeblock><p>to
+        include our page1 content. To do this just change it to:<codeblock>#box_form &gt; *, #page1 &gt; ui-widget-content {</codeblock></p></li>
+
+        <li>Finally, we want to update our click handler. Right now if you
+        click you'll only see box_form, like before, because we still tell
+        jQuery to open that dialog first. To change it, rewrite the handler
+        to: <codeblock>$('#click2').click(function(e) {
+     $('#page1').dialog('open');
+});</codeblock><p>In case you can't find it, the original handler says
+        $('#box_Form').dialog('open');</p></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-7">
+    <title>Conclusion</title>
+
+    <body>
+      <p>Now that we've done all this you should be able to have a working
+      feedback with a starter page, a ticket submission page, and a landing
+      page. I have attached the support.png file that I used in my demo. </p>
+    </body>
+  </topic>
+
+  <topic id="movingyourformtoatab-8">
+    <title>Addendum</title>
+
+    <body>
+      <p>In order to give this tab wide reaching compatibility we'll need to
+      add one more thing. Google Chrome, Firefox, and even Safari all render
+      our tab adequately. However, there are issue with Internet Explorer (of
+      course) and we need to tell IE to render our tab in a special way. To do
+      this, you'll want to add the following line at the very top of your HTML
+      page:<codeblock>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"&gt;</codeblock></p>
+    </body>
+  </topic>
+</dita>

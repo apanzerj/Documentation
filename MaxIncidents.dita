@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dita PUBLIC "-//OASIS//DTD DITA Composite//EN"
+"ditabase.dtd">
+<dita>
+  <topic id="MaxIncidents">
+    <title>Introduction</title>
+
+    <body>
+      <p><b>Objective</b>: We want to be able to perform an action when the
+      nth incident ticket is linked to a problem.</p>
+
+      <p><b>Tools</b>: The function we wrote that wraps around CURL. This is
+      included below. If you have used this function previously then that's
+      fine but copy the one listed here as it is more complete. </p>
+
+      <p><b>GitHub Repository: </b><xref
+      href="https://github.com/apanzerj/MaxIncident">https://github.com/apanzerj/MaxIncident</xref></p>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-3">
+    <title>The Workflow</title>
+
+    <body>
+      <p><i>Basic description of how the program works.</i></p>
+
+      <p>The configuration is split between two pieces, a URL target, and a
+      script.</p>
+
+      <ol>
+        <li>We create a trigger that we can call MaxIncidents Trigger. This
+        trigger fires whenever a ticket is updated and the type is either
+        incident or changed to incident.</li>
+
+        <li>When this occurs, a URL target is given the ticket ID number of
+        the <b>incident ticket.</b></li>
+
+        <li>Our script (which is at the other end of the target URL), looks up
+        the incident, then from the incident we pick up the problem ticket
+        that is linked, and finally we count the number incidents.</li>
+
+        <li>After we count the number of incidents, we check the tags on the
+        ticket. If there are any other tags on the ticket we re-set those tags
+        with the addition of an linked_(#ofIncidents). So if we have a ticket
+        with 10 incidents we should have a tag on the problem ticket that is
+        linked_10.</li>
+
+        <li>Now that we have done this, we can create either a trigger or an
+        automation that fires when the tag linked_10 is applied to a problem
+        ticket. This is how we can be notified when a problem ticket has a
+        specific number of incidents attached.</li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-2">
+    <title>curlWrap is Back!</title>
+
+    <body>
+      <p><i>Modifications to curlWrap. I'm not going to dive into what was
+      changed so much as layout how to set it up and paste it into your
+      script.</i></p>
+
+      <ol>
+        <li>The first thing we need to do is create a new PHP file. To do this
+        just create a new document we'll call maxincidents.php</li>
+
+        <li>Inside there we'll put in our standard &lt;?php and ?&gt;</li>
+
+        <li>Now at the top we need our basic include statements:<codeblock>define("ZDAPIKEY", "apikey");
+define("ZDUSER", "username");
+define("ZDURL", "https://ajpspoke.zendesk.com/api/v2");</codeblock></li>
+
+        <li>Replace the words apikey and username with your API key and
+        username from Zendesk. In addition, change the ZDURL to your zendesk
+        url. <b>NOTE: YOUR ZDURL NEEDS TO BE AS FORMATED ABOVE WITHOUT A
+        TRAILING "/"</b></li>
+
+        <li>Now we're going to include curlWrap. I'm not going to dive into a
+        whole lot of detail about what has changed.<codeblock>**FIXME**&lt;script src="https://gist.github.com/2920899.js?file=curlWrap.php"&gt;&lt;/script&gt;</codeblock></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-4">
+    <title>The PHP File</title>
+
+    <body>
+      <p><i>Now let's add to our PHP file.</i></p>
+
+      <ol>
+        <li>We are going to pass the ticket id number of the incident ticket
+        via a GET. This is all being done by our URL target which we haven't
+        created yet. We grab our ticket id and store it to the variable $id.
+        We CURL the ticket and store it to the $data variable.<codeblock>$id = strip_tags($_GET[id]);
+$data = curlWrap("/tickets/".$id.".json", null, "GET");</codeblock></li>
+
+        <li>Next we extract the parent problem ticket from the
+        incident.<codeblock>$source = $data-&gt;ticket-&gt;problem_id;</codeblock></li>
+
+        <li>Then we use the incidents endpoint of the API to get the list of
+        incidents linked to this problem. <codeblock>$num = curlWrap("/tickets/".$source."/incidents.json", null, "GET");</codeblock></li>
+
+        <li>Finally, we count the number of incidents linked. This part might
+        be confusing but understand that the object returned by then
+        incidents.json endpoint is a list of incidents. Thus the number of
+        linked incidents is a simple count of the items in the returned
+        result. <codeblock>$num = count($num-&gt;tickets);</codeblock></li>
+
+        <li>Now we have to copy all the existing tags on our problem ticket.
+        You might be asking why and the answer is that through API we are only
+        able to set tags, not add them. So we copy the existing
+        tags:<codeblock>$pr_tags = curlWrap("/tickets/".$source.".json", null, "GET");
+$tag_arr = $pr_tags-&gt;ticket-&gt;tags;</codeblock></li>
+
+        <li>We look for any existing tags that match the pattern
+        linked_[number]. If we find some, we blindly remove the existing
+        tag.<codeblock>foreach($tag_arr as $key =&gt; $value){
+     if(preg_match('/linked_[0-9]+/i',$value)){
+          unset($tag_arr[$key]);
+     }
+}</codeblock></li>
+
+        <li>And then we add our new tag on:<codeblock>array_push($tag_arr, "linked_".$num);</codeblock></li>
+
+        <li>One note is that when PHP removes a value from an array, it
+        doesn't reindex the array. So we do the following:<codeblock>$tag_arr = array_values($tag_arr);</codeblock><p><i>OPTIONAL
+        (technical explanation that can be skipped): </i>What does this do?
+        Let's say we had three tags on an existing ticket and they are: red,
+        linked_2, and yellow. Then we unset the second tag, in this case,
+        linked_2. We would have a gap in our array and the new tag would go at
+        the end. Reindexing the array makes it so that we have no "gaps" in
+        our list of tags. </p></li>
+
+        <li>We want to create our JSON PUT request so we can update our tags
+        on the problem ticket. <codeblock>$update = json_encode(array( "ticket" =&gt; array("tags" =&gt; $tag_arr)));</codeblock></li>
+
+        <li>Lastly, we send our data to the /tickets/{ticketid}.json endpoint
+        to update the ticket.<codeblock>$data = curlWrap("/tickets/".$source.".json", $update, "PUT");</codeblock></li>
+      </ol>
+
+      <p>The whole script, including CURL function is displayed below. Note:
+      remember to upload your script to your OWN server. <codeblock>**FIXME**&lt;script src="http://gist-it.appspot.com/github/apanzerj/MaxIncident/raw/master/maxIncidents.php"&gt;&lt;/script&gt;</codeblock></p>
+    </body>
+  </topic>
+
+  <topic id="MaxIncidents-5">
+    <title>The URL Target and Trigger</title>
+
+    <body>
+      <p><i>Now we construct the Zendesk URL target to call our script and the
+      trigger that points to the target itself.</i></p>
+
+      <ol>
+        <li>Log into Zendesk.</li>
+
+        <li>Go to Settings -&gt; Extensions.</li>
+
+        <li>Click on the Targets tab.</li>
+
+        <li>Create a new target of type URL Target.</li>
+
+        <li>Name your target in the box labeled Title.</li>
+
+        <li>Where it says URL you'll want to put in ONLY the URL to your
+        script. If my script were hosted at example.com/foo/maxincidents.php I
+        would enter http://www.example.com/foo/maxincidents.php and nothing
+        more. You could put placeholders here but we're not going to do that
+        for this setup.</li>
+
+        <li>Set the method to GET</li>
+
+        <li>Set the attribute name to id</li>
+
+        <li>Create the target (you don't need to test it unless you want
+        to).</li>
+      </ol>
+
+      <p>Now that we have created our URL target we need to make the trigger
+      that will push data to our target. Remember that targets are like
+      destinations. They don't do anything by themselves. So we create our
+      trigger.</p>
+
+      <ol>
+        <li>Go to Manage -&gt; Triggers &amp; mail notifications.</li>
+
+        <li>Add a trigger.</li>
+
+        <li>Name the trigger.</li>
+
+        <li>Under Meet <i>all</i> of the following conditions:<p>Ticket is ...
+        created</p></li>
+
+        <li>Under Meet <i>any</i> of the following conditions:<p>Type ... is
+        ... Incident</p><p>Type ... is changed to ... Incident</p></li>
+
+        <li>Finally, we set up the actions to be performed:<p>Notify target
+        ... (our target we created)</p><p>Message: {{ticket.id}}</p></li>
+
+        <li>Save your trigger and you're done. </li>
+      </ol>
+    </body>
+  </topic>
+</dita>
