@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dita PUBLIC "-//OASIS//DTD DITA Composite//EN"
+"ditabase.dtd">
+<dita>
+  <topic id="CSVTicketExport">
+    <title>Introduction</title>
+
+    <body>
+      <p>Objective: We want to dump to CSV data from the Ticket Export
+      endpoint of the Zendesk API version 2.0.</p>
+
+      <p>Tools: You'll need the curlWrap function, as always.</p>
+
+      <p>Notes: While we are developing and testing our code we'll want to use
+      the sample endpoint which gives us the same sample data over and over.
+      The purpose of this is that the sample endpoint is more forgiving and
+      developed for this very purpose. </p>
+    </body>
+  </topic>
+
+  <topic id="CSVTicketExport-2">
+    <title>Setup</title>
+
+    <body>
+      <p><i>Let's get started with curlWrap.</i></p>
+
+      <ol>
+        <li>You can get the curlWrap function here: <codeblock>***FIXME***&lt;script src="https://gist.github.com/2920899.js"&gt; &lt;/script&gt;</codeblock></li>
+
+        <li>Put this in a new script file called csv.php</li>
+
+        <li>We need to create a new file, of course. The code below will store
+        our filename to a variable and create a file handler.<codeblock>$myFile = "users.csv";
+$fh = fopen($myFile, 'w');</codeblock></li>
+
+        <li>We now have a file handler that is stored in the variable $fh.
+        When we refer to things we will be doing with or to our new CSV file
+        we will use that variable. </li>
+
+        <li>The ticket export endpoint requires a date/time stamp that is in a
+        specific format called UTC Epoch time. Without getting overly
+        technical this is a timestamp, in seconds, since some point in time
+        long ago. To do this we'll use two functions.<p>This sets the timezone
+        to UTC:</p><codeblock>date_default_timezone_set('UTC');</codeblock><p>This
+        tells our program how far back we want to go. <codeblock>$time = strtotime("-8 hours");</codeblock></p><p>You
+        might be wondering what that means? The ticket export endpoint gives
+        us all tickets that were touched between two time periods. The hitch
+        is that the ending time period is always now (ie: when we run the
+        command). The shortest increment we can go back is 5 minutes. In this
+        case we are going to pull a list of tickets from the last 8 hours.
+        </p></li>
+
+        <li/>
+      </ol>
+    </body>
+  </topic>
+</dita>
