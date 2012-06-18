@@ -6,8 +6,10 @@
     <title>Introduction</title>
 
     <body>
-      <p><b>Objective</b>: We want to dump to CSV data from the Ticket Export
-      endpoint of the Zendesk API version 2.0.</p>
+      <p><b>Objective</b>: To download the data from the ticket export
+      endpoint to a CSV file. The reason for this is because many customers
+      want to analyze their Zendesk data in a secondary program (other then
+      GoodData) such as Excel.</p>
 
       <p><b>Tools</b>: You'll need the curlWrap function, as always.</p>
 
@@ -33,7 +35,7 @@
         <li>Put this in a new script file called csv.php</li>
 
         <li>We need to create a new file, of course. The code below will store
-        our filename to a variable and create a file handler.<codeblock>$myFile = "users.csv";
+        our filename to a variable and create a file handler.<codeblock>$myFile = "tickets.csv";
 $fh = fopen($myFile, 'w');</codeblock></li>
 
         <li>We now have a file handler that is stored in the variable $fh.
@@ -99,6 +101,17 @@ $keys = array_keys($first);</codeblock></li>
         <li>The last thing we do is "close" the file we are working on. We do
         this with this command:<codeblock>fclose($fh);</codeblock></li>
       </ol>
+    </body>
+  </topic>
+
+  <topic id="CSVTicketExport-4">
+    <title>The Final Product</title>
+
+    <body>
+      <p>When you run the script you should get a CSV file back with the
+      ticket data we were interested in. I have added to the GitHub repository
+      a sample of the kind of file we will get back from the process. It is
+      called tickets.csv.</p>
     </body>
   </topic>
 </dita>
