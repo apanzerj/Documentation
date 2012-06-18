@@ -6,15 +6,18 @@
     <title>Introduction</title>
 
     <body>
-      <p>Objective: We want to dump to CSV data from the Ticket Export
+      <p><b>Objective</b>: We want to dump to CSV data from the Ticket Export
       endpoint of the Zendesk API version 2.0.</p>
 
-      <p>Tools: You'll need the curlWrap function, as always.</p>
+      <p><b>Tools</b>: You'll need the curlWrap function, as always.</p>
 
-      <p>Notes: While we are developing and testing our code we'll want to use
-      the sample endpoint which gives us the same sample data over and over.
-      The purpose of this is that the sample endpoint is more forgiving and
-      developed for this very purpose.</p>
+      <p><b>Notes</b>: While we are developing and testing our code we'll want
+      to use the sample endpoint which gives us the same sample data over and
+      over. The purpose of this is that the sample endpoint is more forgiving
+      and developed for this very purpose.</p>
+
+      <p><b>GitHub Repository</b>: <xref
+      href="https://github.com/apanzerj/DumpToCSV">https://github.com/apanzerj/DumpToCSV</xref></p>
     </body>
   </topic>
 
