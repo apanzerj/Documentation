@@ -14,7 +14,7 @@
       <p>Notes: While we are developing and testing our code we'll want to use
       the sample endpoint which gives us the same sample data over and over.
       The purpose of this is that the sample endpoint is more forgiving and
-      developed for this very purpose. </p>
+      developed for this very purpose.</p>
     </body>
   </topic>
 
@@ -34,8 +34,8 @@
 $fh = fopen($myFile, 'w');</codeblock></li>
 
         <li>We now have a file handler that is stored in the variable $fh.
-        When we refer to things we will be doing with or to our new CSV file
-        we will use that variable. </li>
+        When we refer to things we will be doing with our new CSV file we will
+        use that variable.</li>
 
         <li>The ticket export endpoint requires a date/time stamp that is in a
         specific format called UTC Epoch time. Without getting overly
@@ -50,7 +50,51 @@ $fh = fopen($myFile, 'w');</codeblock></li>
         case we are going to pull a list of tickets from the last 8 hours.
         </p></li>
 
-        <li/>
+        <li>Now we pull our data from the endpoint:<codeblock>$decoded = curlWrap("/exports/tickets/sample.json?start_time=1332034771", null, "GET");</codeblock></li>
+      </ol>
+    </body>
+  </topic>
+
+  <topic id="CSVTicketExport-3">
+    <title>Building the CSV</title>
+
+    <body>
+      <p><i>Let's build our CSV.</i></p>
+
+      <ol>
+        <li>Now we need to create the header of our CSV. The header usually
+        contains all the column headings we want to use. To create this
+        heading we'll copy the first row of data to a variable called $first.
+        Then we'll convert this to an array (since it started out as an
+        object, if this doesn't make sense, don't worry!) and finally, we'll
+        flip it so that all the values are keys and the keys are values.
+        <codeblock>$first = $decoded-&gt;results[0];
+$first = (array) $first;
+$keys = array_keys($first);</codeblock></li>
+
+        <li>Now we have a column headings in the array called $keys. We need
+        to write this to our CSV. We use the function fputcsv:<codeblock>fputcsv($fh, $keys, ",", "\"");</codeblock></li>
+
+        <li>As you can see, fputcsv takes 4 arguments: the file handler ($fh),
+        the array of data to write (in this case, the keys), the delimiter
+        (ie: comma) and the character to use to encapsulate each field (you
+        should stick with the quote mark ("). For the last paramater, you'll
+        need to "escape" the quote. To do this simply but a backslash before
+        the quote mark so php knows that the quote character is being
+        referenced.</li>
+
+        <li>Finally, we iterate through each result we got from Zendesk and
+        write it to the file we are working on. We do this like so:<codeblock>foreach($decoded-&gt;results as $result){
+     $result = (array) $result;
+     fputcsv($fh, $result, ",", "\"");
+}</codeblock></li>
+
+        <li>As you can see above, we need to convert (like we did before) from
+        an object to an array. We do this the same way as before by putting
+        (array) infront of the variable. This is known as casting.</li>
+
+        <li>The last thing we do is "close" the file we are working on. We do
+        this with this command:<codeblock>fclose($fh);</codeblock></li>
       </ol>
     </body>
   </topic>
